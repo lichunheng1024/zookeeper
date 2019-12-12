@@ -53,7 +53,7 @@ public class ZooKeeperServerMain {
 
     private AdminServer adminServer;
 
-    /*
+    /**
      * Start up the ZooKeeper server.
      *
      * @param args the configfile or the port datadir [ticktime]
@@ -68,22 +68,22 @@ public class ZooKeeperServerMain {
             System.err.println(USAGE);
             System.exit(2);
         } catch (ConfigException e) {
-            LOG.error("Invalid config, exiting abnormally", e);
-            System.err.println("Invalid config, exiting abnormally");
+            LOG.error("--Invalid config, exiting abnormally", e);
+            System.err.println("--Invalid config, exiting abnormally");
             System.exit(2);
         } catch (DatadirException e) {
-            LOG.error("Unable to access datadir, exiting abnormally", e);
+            LOG.error("--Unable to access datadir, exiting abnormally", e);
             System.err.println("Unable to access datadir, exiting abnormally");
             System.exit(3);
         } catch (AdminServerException e) {
-            LOG.error("Unable to start AdminServer, exiting abnormally", e);
+            LOG.error("--Unable to start AdminServer, exiting abnormally", e);
             System.err.println("Unable to start AdminServer, exiting abnormally");
             System.exit(4);
         } catch (Exception e) {
-            LOG.error("Unexpected exception, exiting abnormally", e);
+            LOG.error("--Unexpected exception, exiting abnormally", e);
             System.exit(1);
         }
-        LOG.info("Exiting normally");
+        LOG.info("--Exiting normally");
         System.exit(0);
     }
 

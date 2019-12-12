@@ -134,6 +134,12 @@ public class ClientCnxnSocketNetty extends ClientCnxnSocket {
         Bootstrap bootstrap = new Bootstrap()
                 .group(eventLoopGroup)
                 .channel(NettyUtils.nioOrEpollSocketChannel())
+                /**
+                   Socket参数，关闭Socket的延迟时间，
+                        默认值为-1，表示禁用该功能。-1表示socket.close()方法立即返回，但OS底层会将发送缓冲区全部发送到对端。
+                        0表示socket.close()方法立即返回，OS放弃发送缓冲区的数据直接向对端发送RST包，对端收到复位错误。
+                        非0整数值表示调用socket.close()方法的线程被阻塞直到延迟时间到或发送缓冲区中的数据发送完毕，若超时，则对端会收到复位错误。
+                 */
                 .option(ChannelOption.SO_LINGER, -1)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .handler(new ZKClientPipelineFactory(addr.getHostString(), addr.getPort()));
@@ -143,6 +149,7 @@ public class ClientCnxnSocketNetty extends ClientCnxnSocket {
         connectLock.lock();
         try {
             connectFuture = bootstrap.connect(addr);
+            //注册一个Listener，等待连接成功之后执行。
             connectFuture.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture channelFuture) throws Exception {
