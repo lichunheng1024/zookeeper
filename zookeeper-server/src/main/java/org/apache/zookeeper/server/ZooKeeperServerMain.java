@@ -36,10 +36,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ *  zk服务端启动入口类
  * This class starts and runs a standalone ZooKeeperServer.
  */
 @InterfaceAudience.Public
-public class ZooKeeperServerMain {
+    public class ZooKeeperServerMain {
     private static final Logger LOG =
         LoggerFactory.getLogger(ZooKeeperServerMain.class);
 
@@ -139,6 +140,7 @@ public class ZooKeeperServerMain {
 
             boolean needStartZKServer = true;
             if (config.getClientPortAddress() != null) {
+                //此处用于获取使用Java Nio通信还是 Netty通信
                 cnxnFactory = ServerCnxnFactory.createFactory();
                 cnxnFactory.configure(config.getClientPortAddress(), config.getMaxClientCnxns(), false);
                 cnxnFactory.startup(zkServer);

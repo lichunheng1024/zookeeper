@@ -369,6 +369,8 @@ public class ClientCnxnSocketNetty extends ClientCnxnSocket {
                         (p.requestHeader.getType() != ZooDefs.OpCode.auth)) {
                     p.requestHeader.setXid(cnxn.getXid());
                     synchronized (pendingQueue) {
+                        //将待发送的Packet对象，写入到pendingQueue,
+                        // 该queue的职责为：these are the packets that have been sent and are waiting for response.
                         pendingQueue.add(p);
                     }
                 }

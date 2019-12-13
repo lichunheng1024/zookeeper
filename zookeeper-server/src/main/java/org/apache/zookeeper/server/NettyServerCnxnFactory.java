@@ -275,9 +275,10 @@ public class NettyServerCnxnFactory extends ServerCnxnFactory {
         }
     }
 
+
     NettyServerCnxnFactory() {
         x509Util = new ClientX509Util();
-
+        //zookeeper这个NettyUtils封装的不错,通过程序去做Native优化。
         EventLoopGroup bossGroup = NettyUtils.newNioOrEpollEventLoopGroup(
                 NettyUtils.getClientReachableLocalInetAddressCount());
         EventLoopGroup workerGroup = NettyUtils.newNioOrEpollEventLoopGroup();
@@ -288,6 +289,12 @@ public class NettyServerCnxnFactory extends ServerCnxnFactory {
                 .option(ChannelOption.SO_REUSEADDR, true)
                 // child channels options
                 .childOption(ChannelOption.TCP_NODELAY, true)
+                /**
+                   Socket参数，关闭Socket的延迟时间，
+                 默认值为-1，表示禁用该功能。-1表示socket.close()方法立即返回，但OS底层会将发送缓冲区全部发送到对端。
+                 0表示socket.close()方法立即返回，OS放弃发送缓冲区的数据直接向对端发送RST包，对端收到复位错误。
+                 非0整数值表示调用socket.close()方法的线程被阻塞直到延迟时间到或发送缓冲区中的数据发送完毕，若超时，则对端会收到复位错误。
+                 */
                 .childOption(ChannelOption.SO_LINGER, -1)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override

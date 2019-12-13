@@ -1704,7 +1704,7 @@ public class ZooKeeper implements AutoCloseable {
     }
 
     /**
-     * The asynchronous version of create.
+     * The asynchronous version of create.vvvr
      *
      * @see #create(String, byte[], List, CreateMode, Stat)
      */
@@ -3060,6 +3060,7 @@ public class ZooKeeper implements AutoCloseable {
             clientCnxnSocketName = ClientCnxnSocketNIO.class.getName();
         }
         try {
+            //采用反射的方式创建对象实例
             Constructor<?> clientCxnConstructor = Class.forName(clientCnxnSocketName).getDeclaredConstructor(ZKClientConfig.class);
             ClientCnxnSocket clientCxnSocket = (ClientCnxnSocket) clientCxnConstructor.newInstance(getClientConfig());
             return clientCxnSocket;

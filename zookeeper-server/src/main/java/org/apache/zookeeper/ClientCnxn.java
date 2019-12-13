@@ -715,6 +715,8 @@ public class ClientCnxn {
             synchronized (p) {
                 p.finished = true;
                 p.notifyAll();
+                System.out.println("----finishPacket------>【packet】="+p.hashCode());
+
             }
         } else {
             p.finished = true;
@@ -815,6 +817,8 @@ public class ClientCnxn {
             ReplyHeader replyHdr = new ReplyHeader();
 
             replyHdr.deserialize(bbia, "header");
+
+            //健康检查 ping-pong 事件
             if (replyHdr.getXid() == -2) {
                 // -2 is the xid for pings
                 if (LOG.isDebugEnabled()) {
@@ -826,6 +830,8 @@ public class ClientCnxn {
                 }
                 return;
             }
+
+            //认证鉴权失败事件
             if (replyHdr.getXid() == -4) {
                 // -4 is the xid for AuthPacket               
                 if(replyHdr.getErr() == KeeperException.Code.AUTHFAILED.intValue()) {
@@ -840,6 +846,8 @@ public class ClientCnxn {
                 }
                 return;
             }
+
+            //Watcher事件通知
             if (replyHdr.getXid() == -1) {
                 // -1 means notification
                 if (LOG.isDebugEnabled()) {
@@ -890,7 +898,10 @@ public class ClientCnxn {
                     throw new IOException("Nothing in the queue, but got "
                             + replyHdr.getXid());
                 }
+                //将当前 Packet 从pendingQueue ---LinkedList  中删除，该remove() API，会返回删除的对象。
                 packet = pendingQueue.remove();
+                System.out.println("-----readResponse------>【packet】="+packet.hashCode());
+
             }
             /*
              * Since requests are processed in order, we better get a response
@@ -1219,7 +1230,7 @@ public class ClientCnxn {
                         }
                         to = Math.min(to, pingRwTimeout - idlePingRwServer);
                     }
-
+                    //发送数据
                     clientCnxnSocket.doTransport(to, pendingQueue, ClientCnxn.this);
                 } catch (Throwable e) {
                     if (closing) {
@@ -1492,7 +1503,7 @@ public class ClientCnxn {
     // @VisibleForTesting
     volatile States state = States.NOT_CONNECTED;
 
-    /*
+    /**
      * getXid() is called externally by ClientCnxnNIO::doIO() when packets are sent from the outgoingQueue to
      * the server. Thus, getXid() must be public.
      */
@@ -1526,6 +1537,7 @@ public class ClientCnxn {
             } else {
                 // Wait for request completion infinitely
                 while (!packet.finished) {
+                    System.out.println("----submitRequest------>【packet】="+packet.hashCode());
                     packet.wait();
                 }
             }

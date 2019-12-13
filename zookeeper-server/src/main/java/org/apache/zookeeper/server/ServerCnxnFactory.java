@@ -124,12 +124,16 @@ public abstract class ServerCnxnFactory {
     public abstract void closeAll();
     
     static public ServerCnxnFactory createFactory() throws IOException {
+        //从系统参数中获取配置
         String serverCnxnFactoryName =
             System.getProperty(ZOOKEEPER_SERVER_CNXN_FACTORY);
         if (serverCnxnFactoryName == null) {
+            //默认使用NIO通信
             serverCnxnFactoryName = NIOServerCnxnFactory.class.getName();
         }
         try {
+            //通过反射，基于无参构造器，创建服务端的ServerCnxnFactory对象
+            // 此处的无参构造执行时，会触发
             ServerCnxnFactory serverCnxnFactory = (ServerCnxnFactory) Class.forName(serverCnxnFactoryName)
                     .getDeclaredConstructor().newInstance();
             LOG.info("Using {} as server connection factory", serverCnxnFactoryName);

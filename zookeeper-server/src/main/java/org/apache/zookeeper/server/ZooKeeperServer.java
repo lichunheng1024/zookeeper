@@ -262,6 +262,7 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
     }
 
     /**
+     *   加载数据
      *  Restore sessions and data
      */
     public void loadData() throws IOException, InterruptedException {
